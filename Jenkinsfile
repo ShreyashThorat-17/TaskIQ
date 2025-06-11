@@ -43,7 +43,7 @@ pipeline {
                 bat '''
                     echo Building Angular application...
                     cd TaskIQ
-                    ng build --configuration production
+                    ng build --configuration production --output-path=dist
                 '''
             }
         }
@@ -58,14 +58,14 @@ pipeline {
                         echo   "version": 2,
                         echo   "builds": [
                         echo     {
-                        echo       "src": "dist/task-iq/browser/**",
+                        echo       "src": "dist/**",
                         echo       "use": "@vercel/static"
                         echo     }
                         echo   ],
                         echo   "routes": [
                         echo     {
                         echo       "src": "/(.*)",
-                        echo       "dest": "/dist/task-iq/browser/$1"
+                        echo       "dest": "/dist/$1"
                         echo     }
                         echo   ],
                         echo   "git": {
