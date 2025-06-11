@@ -53,24 +53,26 @@ pipeline {
                 bat '''
                     echo Creating vercel.json...
                     cd TaskIQ
-                    echo {
-                        "version": 2,
-                        "builds": [
-                            {
-                                "src": "dist/task-iq/browser/**",
-                                "use": "@vercel/static"
-                            }
-                        ],
-                        "routes": [
-                            {
-                                "src": "/(.*)",
-                                "dest": "/dist/task-iq/browser/$1"
-                            }
-                        ],
-                        "git": {
-                            "deploymentEnabled": false
-                        }
-                    } > vercel.json
+                    (
+                        echo {
+                        echo   "version": 2,
+                        echo   "builds": [
+                        echo     {
+                        echo       "src": "dist/task-iq/browser/**",
+                        echo       "use": "@vercel/static"
+                        echo     }
+                        echo   ],
+                        echo   "routes": [
+                        echo     {
+                        echo       "src": "/(.*)",
+                        echo       "dest": "/dist/task-iq/browser/$1"
+                        echo     }
+                        echo   ],
+                        echo   "git": {
+                        echo       "deploymentEnabled": false
+                        echo     }
+                        echo }
+                    ) > vercel.json
 
                     echo Linking to Vercel project...
                     vercel link --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_ID% --confirm
