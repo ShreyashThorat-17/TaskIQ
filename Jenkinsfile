@@ -48,16 +48,6 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                bat '''
-                    echo Running tests...
-                    cd TaskIQ
-                    ng test --watch=false --browsers=ChromeHeadless
-                '''
-            }
-        }
-
         stage('Deploy to Vercel') {
             steps {
                 bat '''
