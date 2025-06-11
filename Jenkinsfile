@@ -2,62 +2,87 @@ pipeline {
     agent any
 
     environment {
+        NODE_VERSION = '18.x'
+        NG_CLI_VERSION = '17.0.0'
         VERCEL_TOKEN = credentials('vercel_token')
         VERCEL_ORG_ID = credentials('vercel_org_id')
         VERCEL_PROJECT_ID = credentials('vercel_project_id')
     }
 
     stages {
-        stage('Install Vercel CLI') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Setup Node.js') {
             steps {
                 bat '''
-                    echo Installing Vercel CLI...
+                    echo Installing Node.js...
+                    npm install -g @angular/cli@%NG_CLI_VERSION%
+                    node --version
+                    npm --version
+                '''
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat '''
+                    echo Installing dependencies...
+                    npm install
                     npm install -g vercel
                 '''
             }
         }
 
-        stage('Verify Vercel Token') {
+        stage('Build') {
             steps {
                 bat '''
-                    echo Testing Vercel Token...
-                    vercel whoami --token %VERCEL_TOKEN%
-                    if %ERRORLEVEL% EQU 0 (
-                        echo ✅ Vercel Token is valid
-                    ) else (
-                        echo ❌ Vercel Token is invalid
-                        exit /b 1
-                    )
+                    echo Building Angular application...
+                    ng build --configuration production
                 '''
             }
         }
 
-        stage('Verify Organization ID') {
+        stage('Test') {
             steps {
                 bat '''
-                    echo Testing Organization ID...
-                    vercel teams ls --token %VERCEL_TOKEN% | findstr "%VERCEL_ORG_ID%"
-                    if %ERRORLEVEL% EQU 0 (
-                        echo ✅ Organization ID is valid
-                    ) else (
-                        echo ❌ Organization ID is invalid
-                        exit /b 1
-                    )
+                    echo Running tests...
+                    ng test --watch=false --browsers=ChromeHeadless
                 '''
             }
         }
 
-        stage('Verify Project ID') {
+        stage('Deploy to Vercel') {
             steps {
                 bat '''
-                    echo Testing Project ID...
-                    vercel project ls --token %VERCEL_TOKEN% | findstr "%VERCEL_PROJECT_ID%"
-                    if %ERRORLEVEL% EQU 0 (
-                        echo ✅ Project ID is valid
-                    ) else (
-                        echo ❌ Project ID is invalid
-                        exit /b 1
-                    )
+                    echo Creating vercel.json...
+                    echo {
+                        "version": 2,
+                        "builds": [
+                            {
+                                "src": "dist/task-iq/browser/**",
+                                "use": "@vercel/static"
+                            }
+                        ],
+                        "routes": [
+                            {
+                                "src": "/(.*)",
+                                "dest": "/dist/task-iq/browser/$1"
+                            }
+                        ],
+                        "git": {
+                            "deploymentEnabled": false
+                        }
+                    } > vercel.json
+
+                    echo Linking to Vercel project...
+                    vercel link --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_ID% --confirm
+
+                    echo Deploying to Vercel...
+                    vercel deploy --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod --confirm
                 '''
             }
         }
@@ -68,10 +93,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo 'All credentials verified successfully!'
+            echo 'Pipeline completed successfully! Application deployed to Vercel.'
         }
         failure {
-            echo 'Credential verification failed! Check the logs for details.'
+            echo 'Pipeline failed! Check the logs for details.'
         }
     }
 } 
