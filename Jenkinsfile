@@ -31,6 +31,7 @@ pipeline {
             steps {
                 bat '''
                     echo Installing dependencies...
+                    cd TaskIQ
                     npm install
                     npm install -g vercel
                 '''
@@ -41,6 +42,7 @@ pipeline {
             steps {
                 bat '''
                     echo Building Angular application...
+                    cd TaskIQ
                     ng build --configuration production
                 '''
             }
@@ -50,6 +52,7 @@ pipeline {
             steps {
                 bat '''
                     echo Running tests...
+                    cd TaskIQ
                     ng test --watch=false --browsers=ChromeHeadless
                 '''
             }
@@ -59,6 +62,7 @@ pipeline {
             steps {
                 bat '''
                     echo Creating vercel.json...
+                    cd TaskIQ
                     echo {
                         "version": 2,
                         "builds": [
