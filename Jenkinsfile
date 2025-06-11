@@ -4,9 +4,10 @@ pipeline {
     environment {
         NODE_VERSION = '18.x'
         NG_CLI_VERSION = '17.0.0'
-        VERCEL_TOKEN = credentials('vercel-token')  // Store Vercel token in Jenkins credentials
-        VERCEL_ORG_ID = credentials('vercel-org-id')  // Store Vercel org ID in Jenkins credentials
-        VERCEL_PROJECT_ID = credentials('vercel-project-id')  // Store Vercel project ID in Jenkins credentials
+        // Update these to match your exact credential IDs from Jenkins
+        VERCEL_TOKEN = credentials('vercel_token')  // Note: using underscore instead of hyphen
+        VERCEL_ORG_ID = credentials('vercel_org_id')
+        VERCEL_PROJECT_ID = credentials('vercel_project_id')
     }
 
     stages {
