@@ -48,6 +48,7 @@ pipeline {
                     echo Verifying build output...
                     if not exist "dist\\task-iq\\browser\\index.html" (
                         echo Build output not found!
+                        dir dist\\task-iq
                         exit /b 1
                     )
                     echo Build output verified successfully.
@@ -70,7 +71,7 @@ pipeline {
                         echo   "version": 2,
                         echo   "builds": [
                         echo     {
-                        echo       "src": "./**",
+                        echo       "src": "index.html",
                         echo       "use": "@vercel/static"
                         echo     }
                         echo   ],
@@ -88,9 +89,6 @@ pipeline {
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
 
-                    echo Verifying build output directory...
-                    dir dist\\task-iq\\browser
-
                     echo Changing directory to build output for deployment...
                     cd dist\\task-iq\\browser
 
@@ -101,7 +99,7 @@ pipeline {
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
 
                     echo Going back to project root for verification commands...
-                    cd ..\\..\\..\\ :: Go back to TaskIQ directory
+                    cd ..\\..\\..\\ :: Back to TaskIQ
 
                     echo Verifying deployment...
                     vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
@@ -118,10 +116,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo 'Pipeline completed successfully! Application deployed to Vercel.'
+            echo '✅ Pipeline completed successfully! Application deployed to Vercel.'
         }
         failure {
-            echo 'Pipeline failed! Check the logs for details.'
+            echo '❌ Pipeline failed! Check the logs for details.'
         }
     }
-} 
+}
