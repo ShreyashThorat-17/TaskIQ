@@ -44,6 +44,13 @@ pipeline {
                     echo Building Angular application...
                     cd TaskIQ
                     ng build --configuration production --progress
+                    
+                    echo Verifying build output...
+                    if not exist "dist\\task-iq\\browser\\index.html" (
+                        echo Build output not found!
+                        exit /b 1
+                    )
+                    echo Build output verified successfully.
                 '''
             }
         }
@@ -75,13 +82,16 @@ pipeline {
                     ) > vercel.json
 
                     echo Linking to Vercel project...
-                    vercel link --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_ID% --yes
+                    vercel link --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_ID% --yes --debug
 
                     echo Deploying to Vercel...
-                    vercel deploy --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod --yes
+                    vercel deploy --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod --yes --debug
 
                     echo Verifying deployment...
-                    vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --limit 1
+                    vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --limit 1 --debug
+
+                    echo Checking deployment status...
+                    vercel inspect --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod
                 '''
             }
         }
