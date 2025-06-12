@@ -83,9 +83,7 @@ pipeline {
                         echo   ],
                         echo   "git": {
                         echo       "deploymentEnabled": false
-                        echo     },
-                        echo   "projectId": "%VERCEL_PROJECT_ID%",
-                        echo   "orgId": "%VERCEL_ORG_ID%"
+                        echo     }
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
 
