@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '18.x'
-        NG_CLI_VERSION = '17.0.0'
+        NODE_VERSION = '18.19.0'
+        NG_CLI_VERSION = '18.2.17'
         VERCEL_TOKEN = credentials('vercel_token')
         VERCEL_ORG_ID = credentials('vercel_org_id')
         VERCEL_PROJECT_ID = credentials('vercel_project_id')
