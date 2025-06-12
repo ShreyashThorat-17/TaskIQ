@@ -86,10 +86,10 @@ pipeline {
                         echo   "projectId": "%VERCEL_PROJECT_ID%",
                         echo   "orgId": "%VERCEL_ORG_ID%"
                         echo }
-                    ) > dist\task-iq\browser\vercel.json
+                    ) > dist\\task-iq\\browser\\vercel.json
 
                     echo Changing directory to build output for deployment...
-                    cd dist\task-iq\browser
+                    cd dist\\task-iq\\browser
 
                     echo Deploying to Vercel...
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
