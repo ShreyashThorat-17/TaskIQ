@@ -59,17 +59,18 @@ pipeline {
             steps {
                 bat '''
                     echo Cleaning up old Vercel config...
+                    cd TaskIQ
                     if exist ".vercel" (
                         rmdir /s /q ".vercel"
                     )
 
-                    echo Creating vercel.json...
+                    echo Creating vercel.json in build output directory...
                     (
                         echo {
                         echo   "version": 2,
                         echo   "builds": [
                         echo     {
-                        echo       "src": "dist/task-iq/browser/**",
+                        echo       "src": "./**",
                         echo       "use": "@vercel/static"
                         echo     }
                         echo   ],
@@ -85,10 +86,16 @@ pipeline {
                         echo   "projectId": "%VERCEL_PROJECT_ID%",
                         echo   "orgId": "%VERCEL_ORG_ID%"
                         echo }
-                    ) > vercel.json
+                    ) > dist\task-iq\browser\vercel.json
+
+                    echo Changing directory to build output for deployment...
+                    cd dist\task-iq\browser
 
                     echo Deploying to Vercel...
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
+
+                    echo Going back to project root for verification commands...
+                    cd ..\..\.. // Go back to TaskIQ directory
 
                     echo Verifying deployment...
                     vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
