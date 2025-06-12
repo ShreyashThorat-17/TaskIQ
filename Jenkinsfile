@@ -78,7 +78,7 @@ pipeline {
                     vercel link --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_ID% --confirm
 
                     echo Deploying to Vercel...
-                    vercel deploy --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod --confirm
+                    vercel deploy --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod --yes
                 '''
             }
         }
