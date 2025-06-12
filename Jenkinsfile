@@ -82,7 +82,7 @@ pipeline {
                         echo   ],
                         echo   "git": {
                         echo       "deploymentEnabled": false
-                        echo   },
+                        echo     },
                         echo   "projectId": "%VERCEL_PROJECT_ID%",
                         echo   "orgId": "%VERCEL_ORG_ID%"
                         echo }
@@ -95,7 +95,7 @@ pipeline {
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
 
                     echo Going back to project root for verification commands...
-                    cd ..\\..\\.. :: Go back to TaskIQ directory
+                    cd ..\\..\\..\\ :: Go back to TaskIQ directory
 
                     echo Verifying deployment...
                     vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
