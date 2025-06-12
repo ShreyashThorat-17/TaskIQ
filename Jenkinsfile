@@ -43,7 +43,7 @@ pipeline {
                 bat '''
                     echo Building Angular application...
                     cd TaskIQ
-                    ng build --configuration production --aot --build-optimizer --vendor-chunk --progress
+                    ng build --configuration production --progress
                 '''
             }
         }
