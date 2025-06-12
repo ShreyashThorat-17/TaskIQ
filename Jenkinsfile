@@ -59,7 +59,6 @@ pipeline {
             steps {
                 bat '''
                     echo Cleaning up old Vercel config...
-                    cd TaskIQ
                     if exist ".vercel" (
                         rmdir /s /q ".vercel"
                     )
