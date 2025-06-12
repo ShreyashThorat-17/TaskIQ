@@ -83,8 +83,7 @@ pipeline {
                         echo   ],
                         echo   "git": {
                         echo       "deploymentEnabled": false
-                        echo     },
-                        echo   "rootDirectory": "."
+                        echo     }
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
 
@@ -95,7 +94,7 @@ pipeline {
                     cd
 
                     echo Deploying to Vercel...
-                    vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
+                    vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug --cwd .
 
                     echo Going back to project root for verification commands...
                     cd ..\\..\\..\\ :: Back to TaskIQ
