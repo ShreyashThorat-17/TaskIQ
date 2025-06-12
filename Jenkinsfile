@@ -83,7 +83,8 @@ pipeline {
                         echo   ],
                         echo   "git": {
                         echo       "deploymentEnabled": false
-                        echo     }
+                        echo     },
+                        echo   "rootDirectory": "."
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
 
