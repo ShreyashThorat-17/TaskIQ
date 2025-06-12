@@ -88,8 +88,14 @@ pipeline {
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
 
+                    echo Verifying build output directory...
+                    dir dist\\task-iq\\browser
+
                     echo Changing directory to build output for deployment...
                     cd dist\\task-iq\\browser
+
+                    echo Current directory:
+                    cd
 
                     echo Deploying to Vercel...
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
