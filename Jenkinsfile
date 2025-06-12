@@ -76,7 +76,7 @@ pipeline {
                         echo   "routes": [
                         echo     {
                         echo       "src": "/(.*)",
-                        echo       "dest": "/dist/task-iq/browser/$1"
+                        echo       "dest": "/$1"
                         echo     }
                         echo   ],
                         echo   "git": {
