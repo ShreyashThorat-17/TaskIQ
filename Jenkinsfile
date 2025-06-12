@@ -94,7 +94,14 @@ pipeline {
                     cd
 
                     echo Deploying to Vercel...
+                    echo ===========================================
+                    echo === VERCEL DEPLOYMENT OUTPUT STARTS HERE ===
+                    echo ===========================================
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug --cwd .
+                    echo ===========================================
+                    echo === VERCEL DEPLOYMENT OUTPUT ENDS HERE ===
+                    echo ===========================================
+                    echo PLEASE LOCATE THE DEPLOYMENT URL IN THE OUTPUT ABOVE.
 
                     echo Going back to project root for verification commands...
                     cd ..\\..\\..\\ :: Back to TaskIQ
