@@ -58,40 +58,44 @@ pipeline {
         stage('Deploy to Vercel') {
             steps {
                 bat '''
-                    echo Creating vercel.json...
+                    echo Cleaning up old Vercel config...
                     cd TaskIQ
+                    if exist ".vercel" (
+                        rmdir /s /q ".vercel"
+                    )
+
+                    echo Creating vercel.json...
                     (
                         echo {
                         echo   "version": 2,
                         echo   "builds": [
                         echo     {
-                        echo       "src": "dist/**",
+                        echo       "src": "dist/task-iq/browser/**",
                         echo       "use": "@vercel/static"
                         echo     }
                         echo   ],
                         echo   "routes": [
                         echo     {
                         echo       "src": "/(.*)",
-                        echo       "dest": "/dist/$1"
+                        echo       "dest": "/dist/task-iq/browser/$1"
                         echo     }
                         echo   ],
                         echo   "git": {
                         echo       "deploymentEnabled": false
-                        echo     }
+                        echo   },
+                        echo   "projectId": "%VERCEL_PROJECT_ID%",
+                        echo   "orgId": "%VERCEL_ORG_ID%"
                         echo }
                     ) > vercel.json
 
-                    echo Linking to Vercel project...
-                    vercel link --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_ID% --yes --debug
-
                     echo Deploying to Vercel...
-                    vercel deploy --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod --yes --debug
+                    vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
 
                     echo Verifying deployment...
-                    vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --limit 1 --debug
+                    vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
 
                     echo Checking deployment status...
-                    vercel inspect --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod
+                    vercel inspect --token %VERCEL_TOKEN% --prod
                 '''
             }
         }
