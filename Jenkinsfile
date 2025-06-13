@@ -64,7 +64,7 @@ pipeline {
                     )
 
                     echo Linking project to Vercel...
-                    vercel link --token %VERCEL_TOKEN% --yes --confirm
+                    vercel link --token %VERCEL_TOKEN% --yes --project-id %VERCEL_PROJECT_ID% --org-id %VERCEL_ORG_ID%
 
                     echo Creating vercel.json in build output directory...
                     (
