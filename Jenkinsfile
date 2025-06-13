@@ -7,6 +7,7 @@ pipeline {
         VERCEL_TOKEN = credentials('vercel_token')
         VERCEL_ORG_ID = credentials('vercel_org_id')
         VERCEL_PROJECT_ID = credentials('vercel_project_id')
+        GIT_CREDENTIALS = credentials('github_credentials')
     }
 
     stages {
@@ -15,8 +16,15 @@ pipeline {
                 // Clean workspace
                 cleanWs()
                 
-                // Checkout code
-                checkout scm
+                // Checkout code with credentials
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        credentialsId: 'github_credentials',
+                        url: 'https://github.com/ShreyashThorat-17/TaskIQ.git'
+                    ]]
+                ])
                 
                 // Setup Node.js
                 nodejs(nodeJSInstallationName: 'NodeJS 20.x') {
