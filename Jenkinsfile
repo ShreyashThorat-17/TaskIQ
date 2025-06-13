@@ -130,7 +130,7 @@ pipeline {
                 echo '✅ Verifying deployment...'
                 bat '''
                     echo Checking recent deployments...
-                    vercel ls --token %VERCEL_TOKEN% --limit 5 --scope %VERCEL_ORG_ID%
+                    vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID%
                     
                     echo Getting project information...
                     vercel project ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID%
