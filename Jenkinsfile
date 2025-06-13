@@ -63,7 +63,11 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                withCredentials([string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL_TOKEN')]) {
+                withCredentials([
+                    string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL_TOKEN'),
+                    string(credentialsId: 'VERCEL_ORG_ID', variable: 'VERCEL_ORG_ID'),
+                    string(credentialsId: 'VERCEL_PROJECT_ID', variable: 'VERCEL_PROJECT_ID')
+                ]) {
                     bat '''
                         echo Cleaning up old Vercel config...
                         if exist ".vercel" (
@@ -102,7 +106,7 @@ pipeline {
                         echo ===========================================
                         echo === VERCEL DEPLOYMENT OUTPUT STARTS HERE ===
                         echo ===========================================
-                        vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug --cwd .
+                        vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug --cwd . --scope %VERCEL_ORG_ID% --confirm
                         echo ===========================================
                         echo === VERCEL DEPLOYMENT OUTPUT ENDS HERE ===
                         echo ===========================================
@@ -112,10 +116,10 @@ pipeline {
                         cd ..\\..\\ :: Back to project root
 
                         echo Verifying deployment...
-                        vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
+                        vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --limit 1 --debug
 
                         echo Checking deployment status...
-                        vercel inspect --token %VERCEL_TOKEN% --prod
+                        vercel inspect --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod
                     '''
                 }
             }
