@@ -63,8 +63,8 @@ pipeline {
                         rmdir /s /q ".vercel"
                     )
 
-                    echo Setting up Vercel configuration...
-                    echo {"orgId":"%VERCEL_ORG_ID%","projectId":"%VERCEL_PROJECT_ID%"} > .vercel\\project.json
+                    echo Linking project to Vercel...
+                    vercel link --token %VERCEL_TOKEN% --yes --scope %VERCEL_ORG_ID%
 
                     echo Creating vercel.json in build output directory...
                     (
