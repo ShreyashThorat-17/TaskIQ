@@ -72,7 +72,7 @@ pipeline {
                         echo   "version": 2,
                         echo   "builds": [
                         echo     {
-                        echo       "src": "index.html",
+                        echo       "src": "./**",
                         echo       "use": "@vercel/static"
                         echo     }
                         echo   ],
@@ -87,6 +87,9 @@ pipeline {
                         echo     }
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
+
+                    echo Verifying build output directory...
+                    dir dist\\task-iq\\browser
 
                     echo Changing directory to build output for deployment...
                     cd dist\\task-iq\\browser
@@ -115,10 +118,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo '✅ Pipeline completed successfully! Application deployed to Vercel.'
+            echo 'Pipeline completed successfully! Application deployed to Vercel.'
         }
         failure {
-            echo '❌ Pipeline failed! Check the logs for details.'
+            echo 'Pipeline failed! Check the logs for details.'
         }
     }
-}
+} 
