@@ -56,7 +56,7 @@ export class ChartService {
               color: 'rgba(0, 0, 0, 0.1)'
             },
             ticks: {
-              callback: (value) => {
+              callback: (value: number | string) => {
                 return new Intl.NumberFormat('en-IN', {
                   style: 'currency',
                   currency: 'INR',
@@ -159,7 +159,7 @@ export class ChartService {
               color: 'rgba(0, 0, 0, 0.1)'
             },
             ticks: {
-              callback: (value) => {
+              callback: (value: number | string) => {
                 return new Intl.NumberFormat('en-IN', {
                   style: 'currency',
                   currency: 'INR',
