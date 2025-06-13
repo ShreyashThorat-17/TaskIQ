@@ -85,7 +85,7 @@ pipeline {
                         echo   "version": 2,
                         echo   "builds": [
                         echo     {
-                        echo       "src": "index.html",
+                        echo       "src": "./**",
                         echo       "use": "@vercel/static"
                         echo     }
                         echo   ],
