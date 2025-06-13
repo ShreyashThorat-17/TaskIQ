@@ -5,13 +5,18 @@
             "src": "package.json",
             "use": "@vercel/static-build",
             "config": {
-                "outputDirectory": "dist/task-iq/browser"
+                "outputDirectory": "dist/task-iq"
             }
         }
     ],
     "routes": [
         {
-            "handle": "filesystem"
+            "src": "/assets/(.*)",
+            "dest": "/assets/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
         },
         {
             "src": "/(.*)",
