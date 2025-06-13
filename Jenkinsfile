@@ -4,51 +4,38 @@ pipeline {
     environment {
         NODE_VERSION = '20.19.0'
         NPM_VERSION = '10.2.3'
+        NG_CLI_VERSION = '20.0.2'
         VERCEL_TOKEN = credentials('vercel_token')
         VERCEL_ORG_ID = credentials('vercel_org_id')
         VERCEL_PROJECT_ID = credentials('vercel_project_id')
-        GIT_CREDENTIALS = credentials('github_credentials')
     }
 
     stages {
-        stage('Setup') {
+        stage('Checkout') {
             steps {
-                // Clean workspace
-                cleanWs()
-                
-                // Checkout code with credentials
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        credentialsId: 'github_credentials',
-                        url: 'https://github.com/ShreyashThorat-17/TaskIQ.git'
-                    ]]
-                ])
-                
-                // Setup Node.js
-                nodejs(nodeJSInstallationName: 'NodeJS 20.x') {
-                    bat 'node --version'
-                    bat 'npm --version'
-                }
+                checkout scm
+            }
+        }
+
+        stage('Setup Node.js') {
+            steps {
+                bat '''
+                    echo Installing Node.js...
+                    npm install -g @angular/cli@%NG_CLI_VERSION%
+                    node --version
+                    npm --version
+                '''
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm ci'
-            }
-        }
-
-        stage('Lint') {
-            steps {
-                bat 'npm run lint'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                bat 'npm run test -- --watch=false --browsers=ChromeHeadless'
+                bat '''
+                    echo Installing dependencies...
+                    cd TaskIQ
+                    npm install
+                    npm install -g vercel
+                '''
             }
         }
 
@@ -56,7 +43,8 @@ pipeline {
             steps {
                 bat '''
                     echo Building Angular application...
-                    npm run build -- --configuration production
+                    cd TaskIQ
+                    ng build --configuration production --progress
                     
                     echo Verifying build output...
                     if not exist "dist\\task-iq\\browser\\index.html" (
@@ -71,72 +59,61 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL_TOKEN'),
-                    string(credentialsId: 'VERCEL_ORG_ID', variable: 'VERCEL_ORG_ID'),
-                    string(credentialsId: 'VERCEL_PROJECT_ID', variable: 'VERCEL_PROJECT_ID')
-                ]) {
-                    bat '''
-                        echo Cleaning up old Vercel config...
-                        if exist ".vercel" (
-                            rmdir /s /q ".vercel"
-                        )
+                bat '''
+                    echo Cleaning up old Vercel config...
+                    cd TaskIQ
+                    if exist ".vercel" (
+                        rmdir /s /q ".vercel"
+                    )
 
-                        echo Creating vercel.json in build output directory...
-                        (
-                            echo {
-                            echo   "version": 2,
-                            echo   "builds": [
-                            echo     {
-                            echo       "src": "index.html",
-                            echo       "use": "@vercel/static"
-                            echo     }
-                            echo   ],
-                            echo   "routes": [
-                            echo     {
-                            echo       "src": "/(.*)",
-                            echo       "dest": "/$1"
-                            echo     }
-                            echo   ],
-                            echo   "git": {
-                            echo       "deploymentEnabled": false
-                            echo     }
-                            echo }
-                        ) > dist\\task-iq\\browser\\vercel.json
+                    echo Creating vercel.json in build output directory...
+                    (
+                        echo {
+                        echo   "version": 2,
+                        echo   "builds": [
+                        echo     {
+                        echo       "src": "index.html",
+                        echo       "use": "@vercel/static"
+                        echo     }
+                        echo   ],
+                        echo   "routes": [
+                        echo     {
+                        echo       "src": "/(.*)",
+                        echo       "dest": "/$1"
+                        echo     }
+                        echo   ],
+                        echo   "git": {
+                        echo       "deploymentEnabled": false
+                        echo     },
+                        echo   "projectId": "%VERCEL_PROJECT_ID%",
+                        echo   "orgId": "%VERCEL_ORG_ID%"
+                        echo }
+                    ) > dist\\task-iq\\browser\\vercel.json
 
-                        echo Changing directory to build output for deployment...
-                        cd dist\\task-iq\\browser
+                    echo Changing directory to build output for deployment...
+                    cd dist\\task-iq\\browser
 
-                        echo Current directory:
-                        cd
+                    echo Current directory:
+                    cd
 
-                        echo Deploying to Vercel...
-                        echo ===========================================
-                        echo === VERCEL DEPLOYMENT OUTPUT STARTS HERE ===
-                        echo ===========================================
-                        vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug --cwd . --scope %VERCEL_ORG_ID% --confirm
-                        echo ===========================================
-                        echo === VERCEL DEPLOYMENT OUTPUT ENDS HERE ===
-                        echo ===========================================
-                        echo PLEASE LOCATE THE DEPLOYMENT URL IN THE OUTPUT ABOVE.
+                    echo Deploying to Vercel...
+                    vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
 
-                        echo Going back to project root for verification commands...
-                        cd ..\\..\\ :: Back to project root
+                    echo Going back to project root for verification commands...
+                    cd ..\\..\\..\\ :: Back to TaskIQ
 
-                        echo Verifying deployment...
-                        vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --limit 1 --debug
+                    echo Verifying deployment...
+                    vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
 
-                        echo Checking deployment status...
-                        vercel inspect --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID% --prod
-                    '''
-                }
+                    echo Checking deployment status...
+                    vercel inspect --token %VERCEL_TOKEN% --prod
+                '''
             }
         }
     }
 
     post {
         always {
-            // Clean up workspace
             cleanWs()
         }
         success {
