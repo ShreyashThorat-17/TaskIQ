@@ -9,7 +9,6 @@ pipeline {
         VERCEL_ORG_ID = credentials('vercel_org_id')
         VERCEL_PROJECT_ID = credentials('vercel_project_id')
         VERCEL_PROJECT_NAME = 'task-iq'
-        PROJECT_DIR = 'TaskIQ'
     }
 
     stages {
@@ -38,7 +37,6 @@ pipeline {
                 echo '📦 Installing project dependencies...'
                 bat '''
                     echo Installing dependencies...
-                    cd %PROJECT_DIR%
                     npm install
                     
                     echo Installing Vercel CLI...
@@ -53,7 +51,6 @@ pipeline {
                 echo '🏗️ Building Angular application...'
                 bat '''
                     echo Building Angular application...
-                    cd %PROJECT_DIR%
                     ng build --configuration production --progress
                     
                     echo Verifying build output...
@@ -80,7 +77,6 @@ pipeline {
                 echo '🚀 Deploying to Vercel...'
                 bat '''
                     echo Cleaning up old Vercel config...
-                    cd %PROJECT_DIR%
                     if exist ".vercel" (rmdir /s /q ".vercel")
                     
                     echo Creating vercel.json in build output directory...
