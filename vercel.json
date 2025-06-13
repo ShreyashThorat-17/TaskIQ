@@ -1,5 +1,14 @@
 {
     "version": 2,
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "outputDirectory": "dist/task-iq/browser"
+            }
+        }
+    ],
     "routes": [
         {
             "handle": "filesystem"
@@ -10,6 +19,6 @@
         }
     ],
     "git": {
-        "deploymentEnabled": false
+        "deploymentEnabled": true
     }
 }
