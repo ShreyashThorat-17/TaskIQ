@@ -34,7 +34,7 @@ pipeline {
                 bat '''
                     echo Installing dependencies...
                     npm install
-                    npm install -g vercel
+                    npm install -g vercel@38.3.2
                 '''
             }
         }
