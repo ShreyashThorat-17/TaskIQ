@@ -32,7 +32,6 @@ pipeline {
             steps {
                 bat '''
                     echo Installing dependencies...
-                    cd TaskIQ
                     npm install
                     npm install -g vercel
                 '''
@@ -43,7 +42,6 @@ pipeline {
             steps {
                 bat '''
                     echo Building Angular application...
-                    cd TaskIQ
                     ng build --configuration production --progress
                     
                     echo Verifying build output...
@@ -61,10 +59,12 @@ pipeline {
             steps {
                 bat '''
                     echo Cleaning up old Vercel config...
-                    cd TaskIQ
                     if exist ".vercel" (
                         rmdir /s /q ".vercel"
                     )
+
+                    echo Linking project to Vercel...
+                    vercel link --token %VERCEL_TOKEN% --yes --confirm
 
                     echo Creating vercel.json in build output directory...
                     (
@@ -84,9 +84,7 @@ pipeline {
                         echo   ],
                         echo   "git": {
                         echo       "deploymentEnabled": false
-                        echo     },
-                        echo   "projectId": "%VERCEL_PROJECT_ID%",
-                        echo   "orgId": "%VERCEL_ORG_ID%"
+                        echo     }
                         echo }
                     ) > dist\\task-iq\\browser\\vercel.json
 
@@ -100,7 +98,7 @@ pipeline {
                     vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
 
                     echo Going back to project root for verification commands...
-                    cd ..\\..\\..\\ :: Back to TaskIQ
+                    cd ..\\..\\ :: Back to root
 
                     echo Verifying deployment...
                     vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
