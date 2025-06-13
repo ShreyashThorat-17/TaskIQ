@@ -14,14 +14,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo '📥 Checking out source code...'
+                echo 'Checking out source code...'
                 checkout scm
             }
         }
 
         stage('Setup Node.js') {
             steps {
-                echo '🔧 Setting up Node.js environment...'
+                echo 'Setting up Node.js environment...'
                 bat '''
                     echo Installing Node.js...
                     npm install -g @angular/cli@%NG_CLI_VERSION%
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                echo '📦 Installing project dependencies...'
+                echo 'Installing project dependencies...'
                 bat '''
                     echo Installing dependencies...
                     npm install
@@ -48,7 +48,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo '🏗️ Building Angular application...'
+                echo 'Building Angular application...'
                 bat '''
                     echo Building Angular application...
                     ng build --configuration production --progress
@@ -74,7 +74,7 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                echo '🚀 Deploying to Vercel...'
+                echo 'Deploying to Vercel...'
                 bat '''
                     echo Cleaning up old Vercel config...
                     if exist ".vercel" (rmdir /s /q ".vercel")
@@ -127,7 +127,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                echo '✅ Verifying deployment...'
+                echo 'Verifying deployment...'
                 bat '''
                     echo Checking recent deployments...
                     vercel ls --token %VERCEL_TOKEN% --scope %VERCEL_ORG_ID%
@@ -141,16 +141,16 @@ pipeline {
 
     post {
         always {
-            echo '🧹 Cleaning up workspace...'
+            echo 'Cleaning up workspace...'
             cleanWs()
         }
         success {
-            echo '✅ Pipeline completed successfully! Application deployed to Vercel.'
-            echo '🌐 Check your Vercel dashboard for deployment URL.'
+            echo 'Pipeline completed successfully! Application deployed to Vercel.'
+            echo 'Check your Vercel dashboard for deployment URL.'
         }
         failure {
-            echo '❌ Pipeline failed! Check the logs for details.'
-            echo '💡 Common issues:'
+            echo 'Pipeline failed! Check the logs for details.'
+            echo 'Common issues:'
             echo '   - Check if Node.js/npm versions are compatible'
             echo '   - Verify Vercel credentials are correctly configured'
             echo '   - Ensure build output directory structure is correct'
