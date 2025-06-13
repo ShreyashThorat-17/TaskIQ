@@ -1,18 +1,16 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "dist/task-iq/browser/**",
-            "use": "@vercel/static"
-        }
-    ],
     "routes": [
         {
-            "src": "/(.*)",
-            "dest": "/dist/task-iq/browser/$1"
+            "handle": "filesystem"
+        },
+        {
+            "src": "/**",
+            "dest": "/index.html"
         }
     ],
     "git": {
         "deploymentEnabled": false
     }
+} 
 } 
