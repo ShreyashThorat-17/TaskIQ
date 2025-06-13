@@ -7,8 +7,8 @@ pipeline {
         NG_CLI_VERSION = '20.0.2'
         VERCEL_TOKEN = credentials('vercel_token')
         VERCEL_ORG_ID = credentials('vercel_org_id')
-        VERCEL_PROJECT_ID = credentials('vercel_project_id') // Optional now
-        VERCEL_PROJECT_NAME = 'your-vercel-project-name' // <--- Replace with actual project name
+        VERCEL_PROJECT_ID = credentials('vercel_project_id')
+        VERCEL_PROJECT_NAME = 'task-iq'
     }
 
     stages {
