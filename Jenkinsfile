@@ -7,7 +7,8 @@ pipeline {
         NG_CLI_VERSION = '20.0.2'
         VERCEL_TOKEN = credentials('vercel_token')
         VERCEL_ORG_ID = credentials('vercel_org_id')
-        VERCEL_PROJECT_ID = credentials('vercel_project_id')
+        VERCEL_PROJECT_ID = credentials('vercel_project_id') // Optional now
+        VERCEL_PROJECT_NAME = 'your-vercel-project-name' // <--- Replace with actual project name
     }
 
     stages {
@@ -58,14 +59,6 @@ pipeline {
         stage('Deploy to Vercel') {
             steps {
                 bat '''
-                    echo Cleaning up old Vercel config...
-                    if exist ".vercel" (
-                        rmdir /s /q ".vercel"
-                    )
-
-                    echo Linking project to Vercel...
-                    vercel link --token %VERCEL_TOKEN% --yes --scope %VERCEL_ORG_ID%
-
                     echo Creating vercel.json in build output directory...
                     (
                         echo {
@@ -91,23 +84,14 @@ pipeline {
                     echo Verifying build output directory...
                     dir dist\\task-iq\\browser
 
-                    echo Changing directory to build output for deployment...
-                    cd dist\\task-iq\\browser
-
-                    echo Current directory:
-                    cd
-
                     echo Deploying to Vercel...
-                    vercel deploy --token %VERCEL_TOKEN% --prod --yes --debug
-
-                    echo Going back to project root for verification commands...
-                    cd ..\\..\\ :: Back to root
+                    vercel deploy dist\\task-iq\\browser --token %VERCEL_TOKEN% --prod --yes --scope %VERCEL_ORG_ID% --project %VERCEL_PROJECT_NAME%
 
                     echo Verifying deployment...
-                    vercel ls --token %VERCEL_TOKEN% --limit 1 --debug
+                    vercel ls --token %VERCEL_TOKEN% --limit 1 --scope %VERCEL_ORG_ID%
 
                     echo Checking deployment status...
-                    vercel inspect --token %VERCEL_TOKEN% --prod
+                    vercel inspect --token %VERCEL_TOKEN% --prod --scope %VERCEL_ORG_ID%
                 '''
             }
         }
@@ -124,4 +108,4 @@ pipeline {
             echo 'Pipeline failed! Check the logs for details.'
         }
     }
-} 
+}
