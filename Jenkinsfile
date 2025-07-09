@@ -38,7 +38,8 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} 'mkdir -p ${APP_DIR}'
                         scp -o StrictHostKeyChecking=no -r dist/* ${EC2_USER}@${EC2_IP}:${APP_DIR}/
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} 'cd ${APP_DIR} && ./deploy.sh'
+                        scp -o StrictHostKeyChecking=no deploy.sh ${EC2_USER}@${EC2_IP}:${APP_DIR}/
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} 'cd ${APP_DIR} && chmod +x deploy.sh && ./deploy.sh'
                     """
                 }
             }
