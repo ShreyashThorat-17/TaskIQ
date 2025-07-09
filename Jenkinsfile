@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        EC2_USER = 'Linux/UNIX'
+        EC2_USER = 'ec2-user'
         EC2_IP = '13.49.77.138'
         SSH_KEY_ID = 'ec2_ssh_key'
         APP_DIR = '/home/ec2-user/TaskIQ'
